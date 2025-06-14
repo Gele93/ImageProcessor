@@ -1,0 +1,43 @@
+# Ignore Visual Studio temporary files, build results, and
+# user-specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore build output folders
+**/bin/
+**/obj/
+
+# Ignore C++ build folders (common)
+**/build/
+**/x64/
+**/Debug/
+**/Release/
+
+# Ignore Visual Studio Code settings (if you use VSCode)
+.vscode/
+
+# Ignore native C++ specific
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+
+# Ignore JetBrains Rider files (if applicable)
+.idea/
+
+# Ignore logs
+*.log
+
+# Ignore NuGet packages
+*.nupkg
+packages/
+
+# Ignore Mac OS files
+.DS_Store
+
+# Ignore node_modules if any JS/TS projects appear
+node_modules/
