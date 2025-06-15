@@ -7,4 +7,4 @@
 #endif
 
 extern "C" IMAGEPROCESSORNATIVE_API
-void ApplyGaussianBlur(unsigned char* inputImage, unsigned char* outputImage, int width, int height);
+void ApplyGaussianBlur(unsigned char* inputImage, unsigned char* outputImage, int width, int height, int blurStrength);

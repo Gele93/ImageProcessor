@@ -7,7 +7,7 @@ namespace ImageProcessor.Services.Converters
     {
         public byte[] GetRawRgbBytes(Image img, out int width, out int height);
         public byte[] EncodeRgbBytes(byte[] rgbBytes, int width, int height, EncodingType encodingType);
-
+        public Task<byte[]> ConvertImageToBytes(IFormFile file, CancellationToken cancellationToken);
 
     }
 }

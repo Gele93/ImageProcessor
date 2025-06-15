@@ -9,13 +9,14 @@ namespace ImageProcessor.Services.Modifiers
 {
     public class ImageModifier :IImageModifier
     {
+        private const int BlurStrength = 255;
         private IImageConverter _imageConverter;
-
-        public ImageModifier(IImageConverter imageConverter)
+        private ILogger<ImageModifier> _logger;
+        public ImageModifier(IImageConverter imageConverter, ILogger<ImageModifier> logger)
         {
             _imageConverter = imageConverter;
+            _logger = logger;
         }
-
 
         public async Task<(byte[], int, int)> UseGaussianBlur(byte[] inputImage, CancellationToken cancellationToken)
         {
@@ -24,13 +25,14 @@ namespace ImageProcessor.Services.Modifiers
             var rgbBytes = _imageConverter.GetRawRgbBytes(img, out int width, out int height);
             var size = rgbBytes.Length;
 
+            _logger.LogInformation($"image size: {size}, width: {width}, height: {height}");
 
             byte[] outputImage = new byte[size];
 
             await Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                ExternalServices.ApplyGaussianBlur(rgbBytes, outputImage, width, height);
+                ExternalServices.ApplyGaussianBlur(rgbBytes, outputImage, width, height, BlurStrength);
             }, cancellationToken);
 
             return (outputImage, width, height);

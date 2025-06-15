@@ -6,7 +6,7 @@
 #include <vector>
 
 
-void ApplyGaussianBlur(unsigned char* inputImage, unsigned char* outputImage, int width, int height) {
+void ApplyGaussianBlur(unsigned char* inputImage, unsigned char* outputImage, int width, int height, int blurStrength) {
 
 	int channels = 4;
 
@@ -33,7 +33,7 @@ void ApplyGaussianBlur(unsigned char* inputImage, unsigned char* outputImage, in
 			cv::Rect roi(0, startRow, width, endRow - startRow);
 			cv::Mat inROI = inputRGB(roi);
 			cv::Mat outROI = outputRGB(roi);
-			cv::GaussianBlur(inROI, outROI, cv::Size(101, 101), 0);
+			cv::GaussianBlur(inROI, outROI, cv::Size(blurStrength, blurStrength), 0);
 			});
 	}
 

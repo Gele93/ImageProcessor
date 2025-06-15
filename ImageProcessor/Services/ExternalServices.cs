@@ -8,8 +8,7 @@ namespace ImageProcessor.Services
 {
     public static class ExternalServices
     {
-        [DllImport(@"D:\Gele\Codecool\projects\HW\3DHISTECH\ImageProcessors\x64\Debug\ImageProcessors.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void ApplyGaussianBlur(byte[] inputImage, byte[] outputImage, int width, int height);
-
+        [DllImport("ImageProcessors.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ApplyGaussianBlur(byte[] inputImage, byte[] outputImage, int width, int height, int blurStrength);
     }
 }

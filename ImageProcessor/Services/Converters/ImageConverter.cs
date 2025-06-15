@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using ImageProcessor.Data;
+using System.Threading;
 
 namespace ImageProcessor.Services.Converters
 {
@@ -68,6 +69,14 @@ namespace ImageProcessor.Services.Converters
 
             return ms.ToArray();
         }
+
+        public async Task<byte[]> ConvertImageToBytes(IFormFile file, CancellationToken cancellationToken)
+        {
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream, cancellationToken);
+            return memoryStream.ToArray();
+        }
+
 
     }
 }

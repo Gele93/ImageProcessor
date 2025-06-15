@@ -26,15 +26,15 @@ namespace ImageProcessor.Controllers
             _imageModifier = imageModifier;
         }
 
-        [HttpPost("gaussian-blur")]
-        public async Task<IActionResult> ApplyGaussianBlurToImage([FromBody][Required] ImageProcessRequest request, CancellationToken cancellationToken)
+        [HttpPost("gaussian-blur/base-64")]
+        public async Task<IActionResult> ApplyGaussianBlurToBase64Image([FromBody][Required] ImageProcessBase64Request request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Base64))
             {
                 return BadRequest("The Base64 input is empty.");
             }
 
-            var contentType = Utils.GetContentType(request.Encoding);
+            var contentType = Utils.GetContentTypeString(request.Encoding);
 
             byte[] bytes = null;
             try
@@ -61,6 +61,50 @@ namespace ImageProcessor.Controllers
 
             var encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
 
+            var stream = new MemoryStream(encodedImage);
+            return new FileStreamResult(stream, contentType);
+        }
+
+        [HttpPost("gaussian-blur/upload")]
+        public async Task<IActionResult> ApplyGaussianBlurToUploadedImage([FromForm][Required] ImageProcessUploadRequest request, CancellationToken cancellationToken)
+        {
+            var contentType = Utils.GetContentTypeString(request.Encoding);
+
+            try
+            {
+                Utils.IsValidJpgOrPng(request.File);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Invalid file uploaded: {ex.Message}");
+                return BadRequest("Invalid file uploaded");
+            }
+
+            byte[] bytes = null;
+            try
+            {
+                bytes = await _imageConverter.ConvertImageToBytes(request.File, cancellationToken);
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError($"Error while converting the image to byte[]: {ex.Message}");
+                return BadRequest("The uploaded image could not be converted to byte[].");
+            }
+
+            byte[] bluredBytes = null;
+            int width, height;
+            try
+            {
+                (bluredBytes, width, height) = await _imageModifier.UseGaussianBlur(bytes, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error while blurring the image: {ex.Message}");
+                return StatusCode(500, "An internal error occured while blurring the image.");
+            }
+
+            var encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
+            
             var stream = new MemoryStream(encodedImage);
             return new FileStreamResult(stream, contentType);
         }

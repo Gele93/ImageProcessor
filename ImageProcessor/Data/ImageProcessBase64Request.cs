@@ -2,7 +2,7 @@
 
 namespace ImageProcessor.Data
 {
-    public record ImageProcessRequest(
+    public record ImageProcessBase64Request(
         [Required]
         string Base64,
         [Required]
