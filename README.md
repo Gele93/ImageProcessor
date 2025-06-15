@@ -1,7 +1,7 @@
 # Image Processor Documentation
 
 ## Project Overview
-**Name:** Image Processor Runner  
+**Name:** Image Processor  
 
 **Description:**  
 An ASP.NET Core REST API exposing endpoints for applying Gaussian Blur on inputed .png / .jpg images.
@@ -35,8 +35,8 @@ An ASP.NET Core REST API exposing endpoints for applying Gaussian Blur on inpute
 	- converts temporary RGBA array to BGRA array -> copy temporary BGRA to output array
  
 ## 2. Structure
-- **ImageProcessor:** ASP.NET project
-- **ImageProcessors:** C++ modules
+- **ImageProcessor/:** ASP.NET project
+- **ImageProcessors/:** C++ modules
 
 - *ImageProcessors.dll* included in the C# project root folder
 - *opencv_world4110d.dll* needs to be added to C# project root folder !
