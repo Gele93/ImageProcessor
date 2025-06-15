@@ -1,7 +1,7 @@
 # Image Processor Documentation
 
 ## Project Overview
-**Name:** Image Processor Runner  
+**Name:** Image Processor  
 
 **Description:**  
 An ASP.NET Core REST API exposing endpoints for applying Gaussian Blur on inputed .png / .jpg images.
