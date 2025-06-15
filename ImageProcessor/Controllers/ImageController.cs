@@ -36,6 +36,7 @@ namespace ImageProcessor.Controllers
 
             var contentType = Utils.GetContentTypeString(request.Encoding);
 
+            //Get binary data of the image
             byte[] bytes = null;
             try
             {
@@ -47,6 +48,7 @@ namespace ImageProcessor.Controllers
                 return BadRequest("The input was not valid BASE64.");
             }
 
+            //bluredBytes will be filled with raw BGRA data of blured image
             byte[] bluredBytes = null;
             int width, height;
             try
@@ -59,6 +61,7 @@ namespace ImageProcessor.Controllers
                 return StatusCode(500, "An internal error occured while blurring the image.");
             }
 
+            //Encodes BGRA data to binary byte[]
             var encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
 
             var stream = new MemoryStream(encodedImage);
@@ -70,6 +73,7 @@ namespace ImageProcessor.Controllers
         {
             var contentType = Utils.GetContentTypeString(request.Encoding);
 
+            //Validates file format
             try
             {
                 Utils.IsValidJpgOrPng(request.File);
@@ -80,6 +84,7 @@ namespace ImageProcessor.Controllers
                 return BadRequest("Invalid file uploaded");
             }
 
+            //Get binary data of the image
             byte[] bytes = null;
             try
             {
@@ -91,6 +96,7 @@ namespace ImageProcessor.Controllers
                 return BadRequest("The uploaded image could not be converted to byte[].");
             }
 
+            //bluredBytes will be filled with raw BGRA data of blured image
             byte[] bluredBytes = null;
             int width, height;
             try
@@ -103,6 +109,7 @@ namespace ImageProcessor.Controllers
                 return StatusCode(500, "An internal error occured while blurring the image.");
             }
 
+            //Encodes BGRA data to binary byte[]
             var encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
             
             var stream = new MemoryStream(encodedImage);

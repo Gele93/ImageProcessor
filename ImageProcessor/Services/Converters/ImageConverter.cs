@@ -8,7 +8,8 @@ namespace ImageProcessor.Services.Converters
 {
     public class ImageConverter : IImageConverter
     {
-        private readonly PixelFormat _pixelFormat;
+        //In what format we are expecting input images
+        private readonly PixelFormat _pixelFormat;  
         private ILogger<ImageConverter> _logger;
 
         public ImageConverter(ILogger<ImageConverter> logger)

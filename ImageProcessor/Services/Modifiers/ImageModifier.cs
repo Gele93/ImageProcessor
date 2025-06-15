@@ -9,6 +9,7 @@ namespace ImageProcessor.Services.Modifiers
 {
     public class ImageModifier :IImageModifier
     {
+        //Strength of cv::GaussianBlur (must be odd)
         private const int BlurStrength = 255;
         private IImageConverter _imageConverter;
         private ILogger<ImageModifier> _logger;
@@ -27,6 +28,10 @@ namespace ImageProcessor.Services.Modifiers
 
             _logger.LogInformation($"image size: {size}, width: {width}, height: {height}");
 
+            /* outputImage:
+             * Creates an empty byte[] with the same size as the input image in BGRA byte[]             
+             * This will be filled with the blured BGRA data by ApllyGaussianBlur native module
+             */
             byte[] outputImage = new byte[size];
 
             await Task.Run(() =>
