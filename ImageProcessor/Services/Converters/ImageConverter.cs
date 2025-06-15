@@ -9,13 +9,12 @@ namespace ImageProcessor.Services.Converters
     public class ImageConverter : IImageConverter
     {
         //In what format we are expecting input images
-        private readonly PixelFormat _pixelFormat;  
-        private ILogger<ImageConverter> _logger;
+        private static readonly PixelFormat _pixelFormat = PixelFormat.Format32bppArgb;  
+        private readonly ILogger<ImageConverter> _logger;
 
         public ImageConverter(ILogger<ImageConverter> logger)
         {
             _logger = logger;
-            _pixelFormat = PixelFormat.Format32bppArgb;
         }
 
         public byte[] GetRawRgbBytes(Image img, out int width, out int height)
@@ -27,7 +26,7 @@ namespace ImageProcessor.Services.Converters
             if (_pixelFormat != bitmap.PixelFormat)
             {
                 _logger.LogError($"Pixel format missmatch: input:{bitmap.PixelFormat.ToString()} expected: {_pixelFormat.ToString()}");
-                throw new ArgumentException("Pixel format is not supported");
+                throw new ArgumentException($"Unsupported pixel format: {bitmap.PixelFormat}. Expected: {_pixelFormat}");
             }
 
             Rectangle rect = new Rectangle(0, 0, width, height);
@@ -65,7 +64,8 @@ namespace ImageProcessor.Services.Converters
                     break;
 
                 default:
-                    throw new Exception("Invalid encoding type");
+                    _logger.LogError($"Unsupported encoding type: {encodingType}");
+                    throw new ArgumentException($"Unsupported encoding type: {encodingType}");
             }
 
             return ms.ToArray();

@@ -16,9 +16,9 @@ namespace ImageProcessor.Controllers
     [Route("[controller]")]
     public class ImageController : ControllerBase
     {
-        private ILogger<ImageController> _logger;
-        private IImageConverter _imageConverter;
-        private IImageModifier _imageModifier;
+        private readonly ILogger<ImageController> _logger;
+        private readonly IImageConverter _imageConverter;
+        private readonly IImageModifier _imageModifier;
         public ImageController(ILogger<ImageController> logger, IImageConverter imageConverter, IImageModifier imageModifier)
         {
             _logger = logger;
@@ -26,6 +26,12 @@ namespace ImageProcessor.Controllers
             _imageModifier = imageModifier;
         }
 
+        /// <summary>
+        /// Applies a Gaussian blur to a Base64-encoded image and returns the result.
+        /// </summary>
+        /// <param name="request">The request object containing Base64 image and encoding format.</param>
+        /// <param name="cancellationToken">Cancellation token for the request.</param>
+        /// <returns>A blurred image stream in the requested format.</returns>
         [HttpPost("gaussian-blur/base-64")]
         public async Task<IActionResult> ApplyGaussianBlurToBase64Image([FromBody][Required] ImageProcessBase64Request request, CancellationToken cancellationToken)
         {
@@ -68,6 +74,12 @@ namespace ImageProcessor.Controllers
             return new FileStreamResult(stream, contentType);
         }
 
+        /// <summary>
+        /// Applies a Gaussian blur to an uploaded .jpg or .png image and returns the result.
+        /// </summary>
+        /// <param name="request">The request object containing IFormFile file and encoding format.</param>
+        /// <param name="cancellationToken">Cancellation token for the request.</param>
+        /// <returns>A blurred image stream in the requested format.</returns>
         [HttpPost("gaussian-blur/upload")]
         public async Task<IActionResult> ApplyGaussianBlurToUploadedImage([FromForm][Required] ImageProcessUploadRequest request, CancellationToken cancellationToken)
         {

@@ -10,9 +10,9 @@ namespace ImageProcessor.Services.Modifiers
     public class ImageModifier :IImageModifier
     {
         //Strength of cv::GaussianBlur (must be odd)
-        private const int BlurStrength = 255;
-        private IImageConverter _imageConverter;
-        private ILogger<ImageModifier> _logger;
+        private const int BlurStrength = 101;
+        private readonly IImageConverter _imageConverter;
+        private readonly ILogger<ImageModifier> _logger;
         public ImageModifier(IImageConverter imageConverter, ILogger<ImageModifier> logger)
         {
             _imageConverter = imageConverter;
