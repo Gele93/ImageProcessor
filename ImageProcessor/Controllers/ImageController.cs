@@ -7,6 +7,8 @@ using System.Buffers.Text;
 using System.Collections;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
+using ImageProcessor.Services.Converters;
+using ImageProcessor.Services.Modifiers;
 
 namespace ImageProcessor.Controllers
 {
@@ -15,9 +17,13 @@ namespace ImageProcessor.Controllers
     public class ImageController : ControllerBase
     {
         private ILogger<ImageController> _logger;
-        public ImageController(ILogger<ImageController> logger)
+        private IImageConverter _imageConverter;
+        private IImageModifier _imageModifier;
+        public ImageController(ILogger<ImageController> logger, IImageConverter imageConverter, IImageModifier imageModifier)
         {
             _logger = logger;
+            _imageConverter = imageConverter;
+            _imageModifier = imageModifier;
         }
 
         [HttpPost("gaussian-blur")]
@@ -45,7 +51,7 @@ namespace ImageProcessor.Controllers
             int width, height;
             try
             {
-                (bluredBytes, width, height) = await ProcessServices.UseGaussianBlur(bytes, cancellationToken);
+                (bluredBytes, width, height) = await _imageModifier.UseGaussianBlur(bytes, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -53,7 +59,7 @@ namespace ImageProcessor.Controllers
                 return StatusCode(500, "An internal error occured while blurring the image.");
             }
 
-            var encodedImage = ImageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
+            var encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
 
             var stream = new MemoryStream(encodedImage);
             return new FileStreamResult(stream, contentType);

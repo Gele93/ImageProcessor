@@ -1,4 +1,7 @@
 
+using ImageProcessor.Services.Converters;
+using ImageProcessor.Services.Modifiers;
+
 namespace ImageProcessor
 {
     public class Program
@@ -11,6 +14,9 @@ namespace ImageProcessor
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IImageConverter, ImageConverter>();
+            builder.Services.AddScoped<IImageModifier, ImageModifier>();
 
             builder.Services.AddCors(options =>
             {

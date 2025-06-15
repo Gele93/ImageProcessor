@@ -3,18 +3,33 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using ImageProcessor.Data;
 
-namespace ImageProcessor.Services
+namespace ImageProcessor.Services.Converters
 {
-    public static class ImageConverter
+    public class ImageConverter : IImageConverter
     {
-        public static byte[] GetRawRgbBytes(Image img, out int width, out int height)
+        private readonly PixelFormat _pixelFormat;
+        private ILogger<ImageConverter> _logger;
+
+        public ImageConverter(ILogger<ImageConverter> logger)
+        {
+            _logger = logger;
+            _pixelFormat = PixelFormat.Format32bppArgb;
+        }
+
+        public byte[] GetRawRgbBytes(Image img, out int width, out int height)
         {
             using var bitmap = new Bitmap(img);
             width = bitmap.Width;
             height = bitmap.Height;
 
+            if (_pixelFormat != bitmap.PixelFormat)
+            {
+                _logger.LogError($"Pixel format missmatch: input:{bitmap.PixelFormat.ToString()} expected: {_pixelFormat.ToString()}");
+                throw new ArgumentException("Pixel format is not supported");
+            }
+
             Rectangle rect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData bmpData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, _pixelFormat);
 
             int size = Math.Abs(bmpData.Stride) * height;
             byte[] rawRgbBytes = new byte[size];
@@ -25,12 +40,12 @@ namespace ImageProcessor.Services
             return rawRgbBytes;
         }
 
-        public static byte[] EncodeRgbBytes(byte[] rgbBytes, int width, int height, EncodingType encodingType)
-        {
-            var bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+        public byte[] EncodeRgbBytes(byte[] rgbBytes, int width, int height, EncodingType encodingType)
+        {            
+            var bmp = new Bitmap(width, height, _pixelFormat);
 
             Rectangle rect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.WriteOnly, _pixelFormat);
 
             Marshal.Copy(rgbBytes, 0, bmpData.Scan0, rgbBytes.Length);
             bmp.UnlockBits(bmpData);
