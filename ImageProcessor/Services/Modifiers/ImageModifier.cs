@@ -7,7 +7,7 @@ using ImageProcessor.Services.Converters;
 
 namespace ImageProcessor.Services.Modifiers
 {
-    public class ImageModifier :IImageModifier
+    public class ImageModifier : IImageModifier
     {
         //Strength of cv::GaussianBlur (must be odd)
         private const int BlurStrength = 101;

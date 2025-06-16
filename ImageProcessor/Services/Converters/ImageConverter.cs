@@ -17,36 +17,43 @@ namespace ImageProcessor.Services.Converters
             _logger = logger;
         }
 
+
         public byte[] GetRawRgbBytes(Image img, out int width, out int height)
         {
+            //Create a Bitmap copy of the img
             using var bitmap = new Bitmap(img);
             width = bitmap.Width;
             height = bitmap.Height;
 
+            //validates pixel format
             if (_pixelFormat != bitmap.PixelFormat)
             {
                 _logger.LogError($"Pixel format missmatch: input:{bitmap.PixelFormat.ToString()} expected: {_pixelFormat.ToString()}");
                 throw new ArgumentException($"Unsupported pixel format: {bitmap.PixelFormat}. Expected: {_pixelFormat}");
             }
 
-            Rectangle rect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, _pixelFormat);
+            //getting the bitmapdata for the full image
+            Rectangle fullImg = new Rectangle(0, 0, width, height);
+            BitmapData bmpData = bitmap.LockBits(fullImg, ImageLockMode.ReadOnly, _pixelFormat);
 
+            //inits the array for managed image data
             int size = Math.Abs(bmpData.Stride) * height;
             byte[] rawRgbBytes = new byte[size];
 
+            //saves img data from unmanaged memory into managed byte[]
             Marshal.Copy(bmpData.Scan0, rawRgbBytes, 0, size);
             bitmap.UnlockBits(bmpData);
 
             return rawRgbBytes;
         }
 
+
         public byte[] EncodeRgbBytes(byte[] rgbBytes, int width, int height, EncodingType encodingType)
         {            
             var bmp = new Bitmap(width, height, _pixelFormat);
 
-            Rectangle rect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.WriteOnly, _pixelFormat);
+            Rectangle fullImg = new Rectangle(0, 0, width, height);
+            BitmapData bmpData = bmp.LockBits(fullImg, ImageLockMode.WriteOnly, _pixelFormat);
 
             Marshal.Copy(rgbBytes, 0, bmpData.Scan0, rgbBytes.Length);
             bmp.UnlockBits(bmpData);

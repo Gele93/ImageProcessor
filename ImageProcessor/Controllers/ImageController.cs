@@ -43,7 +43,7 @@ namespace ImageProcessor.Controllers
             var contentType = Utils.GetContentTypeString(request.Encoding);
 
             //Get binary data of the image
-            byte[] bytes = null;
+            byte[]? bytes = null;
             try
             {
                 bytes = Convert.FromBase64String(request.Base64);
@@ -55,7 +55,7 @@ namespace ImageProcessor.Controllers
             }
 
             //bluredBytes will be filled with raw BGRA data of blured image
-            byte[] bluredBytes = null;
+            byte[]? bluredBytes = null;
             int width, height;
             try
             {
@@ -68,7 +68,16 @@ namespace ImageProcessor.Controllers
             }
 
             //Encodes BGRA data to binary byte[]
-            var encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
+            byte[]? encodedImage = null;
+            try
+            {
+                encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError($"Failed to encode blured image into ${request.Encoding}. Supported encoding types: .jpg, .png");
+                return BadRequest($"Encoding blured image into ${request.Encoding} failed. Supported encoding types: .jpg, .png");
+            }
 
             var stream = new MemoryStream(encodedImage);
             return new FileStreamResult(stream, contentType);
@@ -97,7 +106,7 @@ namespace ImageProcessor.Controllers
             }
 
             //Get binary data of the image
-            byte[] bytes = null;
+            byte[]? bytes = null;
             try
             {
                 bytes = await _imageConverter.ConvertImageToBytes(request.File, cancellationToken);
@@ -109,7 +118,7 @@ namespace ImageProcessor.Controllers
             }
 
             //bluredBytes will be filled with raw BGRA data of blured image
-            byte[] bluredBytes = null;
+            byte[]? bluredBytes = null;
             int width, height;
             try
             {
@@ -122,10 +131,19 @@ namespace ImageProcessor.Controllers
             }
 
             //Encodes BGRA data to binary byte[]
-            var encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
-            
+            byte[]? encodedImage = null;
+            try
+            {
+                encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError($"Failed to encode blured image into ${request.Encoding}. Supported encoding types: .jpg, .png");
+                return BadRequest($"Encoding blured image into ${request.Encoding} failed. Supported encoding types: .jpg, .png");
+            }
             var stream = new MemoryStream(encodedImage);
             return new FileStreamResult(stream, contentType);
         }
+
     }
 }
