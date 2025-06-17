@@ -21,9 +21,7 @@ namespace ImageProcessor.Services.Converters
         public byte[] GetRawRgbBytes(Image img, out int width, out int height)
         {
             //validates if Image is a Bitmap
-            if (img is not Bitmap bitmap)
-                throw new ArgumentException("Can process only Bitmap classes");
-
+            Bitmap bitmap = new Bitmap(img);
             width = bitmap.Width;
             height = bitmap.Height;
 

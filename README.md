@@ -44,7 +44,7 @@ An ASP.NET Core REST API exposing endpoints for applying Gaussian Blur on inpute
 ## 3. Run
 - install nuget packages
 - install *opencv 4.11.0* (https://opencv.org/releases/)
-- copy *opencv_wrold4110d.dll* to *ImageProcessor/*
+- copy *opencv_world4110d.dll* to *ImageProcessor/*
 - build & run ImageProcessor.sln
 
 ## 4. Contact

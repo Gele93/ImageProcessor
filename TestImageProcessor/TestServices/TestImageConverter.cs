@@ -58,14 +58,6 @@ namespace TestImageProcessor.TestServices
             Assert.That(isAllAlpha255, Is.True);
         }
 
-
-        [Test]
-        public void TestUnsupportedPixelFormatThrowsArgumentException()
-        {
-            using Image unsupportedImage = new Bitmap(100, 100, PixelFormat.Format24bppRgb);
-            Assert.Throws<ArgumentException>(() => _imageConverter.GetRawRgbBytes(unsupportedImage, out int widthR, out int heightR));
-        }
-
         [Test]
         public void Test100x100PixelReturns40000RgbBytes()
         {
