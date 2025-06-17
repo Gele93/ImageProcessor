@@ -58,7 +58,7 @@ namespace ImageProcessor.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Error while blurring the image: {ex.Message}");
-                return StatusCode(500, "An internal error occurred while blurring the image.");
+                return StatusCode(500, $"An internal error occurred while blurring the image: {ex.Message}");
             }
 
             //Encodes BGRA data to binary byte[]
@@ -121,7 +121,7 @@ namespace ImageProcessor.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Error while blurring the image: {ex.Message}");
-                return StatusCode(500, "An internal error occurred while blurring the image.");
+                return StatusCode(500, $"An internal error occurred while blurring the image: {ex.Message}");
             }
 
             //Encodes BGRA data to binary byte[]
