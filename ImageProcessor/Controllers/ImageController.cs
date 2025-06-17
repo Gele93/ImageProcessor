@@ -32,17 +32,15 @@ namespace ImageProcessor.Controllers
         public async Task<IActionResult> ApplyGaussianBlurToBase64Image([FromBody][Required] ImageProcessBase64Request request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Base64))
-            {
                 return BadRequest("The Base64 input is empty.");
-            }
 
             var contentType = Utils.GetContentTypeString(request.Encoding);
 
             //Get binary data of the image
-            byte[] bytes;
+            byte[] encodedBytes;
             try
             {
-                bytes = Convert.FromBase64String(request.Base64);
+                encodedBytes = Convert.FromBase64String(request.Base64);
             }
             catch (FormatException ex)
             {
@@ -51,11 +49,11 @@ namespace ImageProcessor.Controllers
             }
 
             //blurredBytes will be filled with raw BGRA data of blured image
-            byte[] blurredBytes;
+            byte[] blurredBGRAbytes;
             int width, height;
             try
             {
-                (blurredBytes, width, height) = await _imageModifier.UseGaussianBlur(bytes, cancellationToken);
+                (blurredBGRAbytes, width, height) = await _imageModifier.UseGaussianBlur(encodedBytes, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -64,10 +62,10 @@ namespace ImageProcessor.Controllers
             }
 
             //Encodes BGRA data to binary byte[]
-            byte[] encodedImage;
+            byte[] encodedBluredBytes;
             try
             {
-                encodedImage = _imageConverter.EncodeRgbBytes(blurredBytes, width, height, request.Encoding);
+                encodedBluredBytes = _imageConverter.EncodeRgbBytes(blurredBGRAbytes, width, height, request.Encoding);
             }
             catch (ArgumentException ex)
             {
@@ -75,7 +73,7 @@ namespace ImageProcessor.Controllers
                 return BadRequest($"Failed to encode blurred image: {ex.Message}. Supported encoding types: .jpg, .png");
             }
 
-            var stream = new MemoryStream(encodedImage);
+            var stream = new MemoryStream(encodedBluredBytes);
             return new FileStreamResult(stream, contentType);
         }
 
@@ -102,10 +100,10 @@ namespace ImageProcessor.Controllers
             }
 
             //Get binary data of the image
-            byte[] bytes;
+            byte[] encodedBytes;
             try
             {
-                bytes = await _imageConverter.ConvertImageToBytes(request.File, cancellationToken);
+                encodedBytes = await _imageConverter.ConvertImageToBytes(request.File, cancellationToken);
             }
             catch (FormatException ex)
             {
@@ -114,11 +112,11 @@ namespace ImageProcessor.Controllers
             }
 
             //blurredBytes will be filled with raw BGRA data of blurred image
-            byte[] blurredBytes;
+            byte[] blurredBGRAbytes;
             int width, height;
             try
             {
-                (blurredBytes, width, height) = await _imageModifier.UseGaussianBlur(bytes, cancellationToken);
+                (blurredBGRAbytes, width, height) = await _imageModifier.UseGaussianBlur(encodedBytes, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -127,17 +125,17 @@ namespace ImageProcessor.Controllers
             }
 
             //Encodes BGRA data to binary byte[]
-            byte[] encodedImage;
+            byte[] encodedBluredBytes;
             try
             {
-                encodedImage = _imageConverter.EncodeRgbBytes(blurredBytes, width, height, request.Encoding);
+                encodedBluredBytes = _imageConverter.EncodeRgbBytes(blurredBGRAbytes, width, height, request.Encoding);
             }
             catch (ArgumentException ex)
             {
                 _logger.LogError($"Failed to encode blurred image: {ex.Message}. Supported encoding types: .jpg, .png");
                 return BadRequest($"Failed to encode blurred image: {ex.Message}. Supported encoding types: .jpg, .png");
             }
-            var stream = new MemoryStream(encodedImage);
+            var stream = new MemoryStream(encodedBluredBytes);
             return new FileStreamResult(stream, contentType);
         }
 

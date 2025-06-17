@@ -14,7 +14,6 @@ namespace ImageProcessor.Services.Converters
         /// <param name="height">Height of image in pixels.</param>
         /// <returns>Managed byte[] of BGRA image data </returns>
         public byte[] GetRawRgbBytes(Image img, out int width, out int height);
-
         /// <summary>
         /// Returns encoded byte[] of raw BGRA image data.
         /// </summary>

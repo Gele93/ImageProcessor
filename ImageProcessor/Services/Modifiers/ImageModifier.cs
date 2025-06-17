@@ -19,12 +19,12 @@ namespace ImageProcessor.Services.Modifiers
             _logger = logger;
         }
 
-        public async Task<(byte[], int, int)> UseGaussianBlur(byte[] inputImage, CancellationToken cancellationToken)
+        public async Task<(byte[], int, int)> UseGaussianBlur(byte[] encodedBytes, CancellationToken cancellationToken)
         {
-            using var ms = new MemoryStream(inputImage);
+            using var ms = new MemoryStream(encodedBytes);
             using var img = Image.FromStream(ms);
-            var rgbBytes = _imageConverter.GetRawRgbBytes(img, out int width, out int height);
-            var size = rgbBytes.Length;
+            var BGRAbytes = _imageConverter.GetRawRgbBytes(img, out int width, out int height);
+            var size = BGRAbytes.Length;
 
             _logger.LogInformation($"image size: {size}, width: {width}, height: {height}");
 
@@ -32,15 +32,15 @@ namespace ImageProcessor.Services.Modifiers
              * Creates an empty byte[] with the same size as the input image in BGRA byte[]             
              * This will be filled with the blured BGRA data by ApllyGaussianBlur native module
              */
-            byte[] outputImage = new byte[size];
+            byte[] bluredBGRAbytes = new byte[size];
 
             await Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                ExternalServices.ApplyGaussianBlur(rgbBytes, outputImage, width, height, BlurStrength);
+                ExternalServices.ApplyGaussianBlur(BGRAbytes, bluredBGRAbytes, width, height, BlurStrength);
             }, cancellationToken);
 
-            return (outputImage, width, height);
+            return (bluredBGRAbytes, width, height);
         }
     }
 }
