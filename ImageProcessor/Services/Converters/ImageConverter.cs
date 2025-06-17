@@ -9,7 +9,7 @@ namespace ImageProcessor.Services.Converters
     public class ImageConverter : IImageConverter
     {
         //In what format we are expecting input images
-        private static readonly PixelFormat _pixelFormat = PixelFormat.Format32bppArgb;  
+        private static readonly PixelFormat _pixelFormat = PixelFormat.Format32bppArgb;
         private readonly ILogger<ImageConverter> _logger;
 
         public ImageConverter(ILogger<ImageConverter> logger)
@@ -20,8 +20,10 @@ namespace ImageProcessor.Services.Converters
 
         public byte[] GetRawRgbBytes(Image img, out int width, out int height)
         {
-            //Create a Bitmap copy of the img
-            using var bitmap = new Bitmap(img);
+            //validates if Image is a Bitmap
+            if (img is not Bitmap bitmap)
+                throw new ArgumentException("Can process only Bitmap classes");
+
             width = bitmap.Width;
             height = bitmap.Height;
 
@@ -49,7 +51,10 @@ namespace ImageProcessor.Services.Converters
 
 
         public byte[] EncodeRgbBytes(byte[] rgbBytes, int width, int height, EncodingType encodingType)
-        {            
+        {
+            if (rgbBytes.Length < 1)
+                throw new ArgumentException("Can not encode empty rgbByte array");
+
             var bmp = new Bitmap(width, height, _pixelFormat);
 
             Rectangle fullImg = new Rectangle(0, 0, width, height);

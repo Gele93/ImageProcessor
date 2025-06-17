@@ -1,14 +1,10 @@
 ﻿using ImageProcessor.Data;
 using ImageProcessor.Services;
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using System.Buffers.Text;
-using System.Collections;
-using System.IO;
 using System.ComponentModel.DataAnnotations;
 using ImageProcessor.Services.Converters;
 using ImageProcessor.Services.Modifiers;
+using System.Threading;
 
 namespace ImageProcessor.Controllers
 {
@@ -43,7 +39,7 @@ namespace ImageProcessor.Controllers
             var contentType = Utils.GetContentTypeString(request.Encoding);
 
             //Get binary data of the image
-            byte[]? bytes = null;
+            byte[] bytes;
             try
             {
                 bytes = Convert.FromBase64String(request.Base64);
@@ -54,29 +50,29 @@ namespace ImageProcessor.Controllers
                 return BadRequest("The input was not valid BASE64.");
             }
 
-            //bluredBytes will be filled with raw BGRA data of blured image
-            byte[]? bluredBytes = null;
+            //blurredBytes will be filled with raw BGRA data of blured image
+            byte[] blurredBytes;
             int width, height;
             try
             {
-                (bluredBytes, width, height) = await _imageModifier.UseGaussianBlur(bytes, cancellationToken);
+                (blurredBytes, width, height) = await _imageModifier.UseGaussianBlur(bytes, cancellationToken);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error while blurring the image: {ex.Message}");
-                return StatusCode(500, "An internal error occured while blurring the image.");
+                return StatusCode(500, "An internal error occurred while blurring the image.");
             }
 
             //Encodes BGRA data to binary byte[]
-            byte[]? encodedImage = null;
+            byte[] encodedImage;
             try
             {
-                encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
+                encodedImage = _imageConverter.EncodeRgbBytes(blurredBytes, width, height, request.Encoding);
             }
             catch (ArgumentException ex)
             {
-                _logger.LogError($"Failed to encode blured image into ${request.Encoding}. Supported encoding types: .jpg, .png");
-                return BadRequest($"Encoding blured image into ${request.Encoding} failed. Supported encoding types: .jpg, .png");
+                _logger.LogError($"Failed to encode blurred image: {ex.Message}. Supported encoding types: .jpg, .png");
+                return BadRequest($"Failed to encode blurred image: {ex.Message}. Supported encoding types: .jpg, .png");
             }
 
             var stream = new MemoryStream(encodedImage);
@@ -106,7 +102,7 @@ namespace ImageProcessor.Controllers
             }
 
             //Get binary data of the image
-            byte[]? bytes = null;
+            byte[] bytes;
             try
             {
                 bytes = await _imageConverter.ConvertImageToBytes(request.File, cancellationToken);
@@ -117,33 +113,34 @@ namespace ImageProcessor.Controllers
                 return BadRequest("The uploaded image could not be converted to byte[].");
             }
 
-            //bluredBytes will be filled with raw BGRA data of blured image
-            byte[]? bluredBytes = null;
+            //blurredBytes will be filled with raw BGRA data of blurred image
+            byte[] blurredBytes;
             int width, height;
             try
             {
-                (bluredBytes, width, height) = await _imageModifier.UseGaussianBlur(bytes, cancellationToken);
+                (blurredBytes, width, height) = await _imageModifier.UseGaussianBlur(bytes, cancellationToken);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error while blurring the image: {ex.Message}");
-                return StatusCode(500, "An internal error occured while blurring the image.");
+                return StatusCode(500, "An internal error occurred while blurring the image.");
             }
 
             //Encodes BGRA data to binary byte[]
-            byte[]? encodedImage = null;
+            byte[] encodedImage;
             try
             {
-                encodedImage = _imageConverter.EncodeRgbBytes(bluredBytes, width, height, request.Encoding);
+                encodedImage = _imageConverter.EncodeRgbBytes(blurredBytes, width, height, request.Encoding);
             }
             catch (ArgumentException ex)
             {
-                _logger.LogError($"Failed to encode blured image into ${request.Encoding}. Supported encoding types: .jpg, .png");
-                return BadRequest($"Encoding blured image into ${request.Encoding} failed. Supported encoding types: .jpg, .png");
+                _logger.LogError($"Failed to encode blurred image: {ex.Message}. Supported encoding types: .jpg, .png");
+                return BadRequest($"Failed to encode blurred image: {ex.Message}. Supported encoding types: .jpg, .png");
             }
             var stream = new MemoryStream(encodedImage);
             return new FileStreamResult(stream, contentType);
         }
+
 
     }
 }
