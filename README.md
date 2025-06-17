@@ -49,7 +49,7 @@ An ASP.NET Core REST API exposing endpoints for applying Gaussian Blur on inpute
 - install *opencv 4.11.0* (https://opencv.org/releases/)
 - copy *opencv_world4110d.dll* to *ImageProcessor/*
 - build & run ImageProcessor.sln
-- use *swagger* at https://localhost:7197/swagger/index.html
+- use swagger at https://localhost:7197/swagger/index.html
 ```
 
 ## 4. Contact
