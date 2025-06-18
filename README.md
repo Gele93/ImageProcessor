@@ -59,14 +59,14 @@ open http://localhost:5228/swagger/index.html
 ```
 
 ## 5. Useage
-	### 5.1 [HttpPost("gaussian-blur/base-64")]
-		- input image (.jpg/.png) as Base64 string
-		- select .JPG or .PNG output
-		- recieves the blured image
-	### 5.2 [HttpPost("gaussian-blur/upload")]
-		- upload image (.jpg/.png)
-		- select .JPG or .PNG output
-		- recieves the blured image
+### 5.1 [HttpPost("gaussian-blur/base-64")]
+- input image (.jpg/.png) as Base64 string
+- select .JPG or .PNG output
+- recieves the blured image
+### 5.2 [HttpPost("gaussian-blur/upload")]
+- upload image (.jpg/.png)
+- select .JPG or .PNG output
+- recieves the blured image
 
 ## 5. Contact
 Developer: **[Gelecsák Tamás]**  
