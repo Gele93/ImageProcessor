@@ -11,11 +11,7 @@ void ApplyGaussianBlur(unsigned char* inputImage, unsigned char* outputImage, in
 	int channels = 4;
 
 	cv::Mat inputBGR(height, width, CV_8UC4, inputImage);
-	cv::Mat inputRGB;
-	cv::cvtColor(inputBGR, inputRGB, cv::COLOR_BGRA2RGBA);
-
-	cv::Mat outputBGR(height, width, CV_8UC4);
-	cv::Mat outputRGB(height, width, CV_8UC4);
+	cv::Mat outputBGR(height, width, CV_8UC4, outputImage);
 
 	int nThreads = std::thread::hardware_concurrency();
 	if (nThreads == 0) nThreads = 1;
@@ -29,17 +25,14 @@ void ApplyGaussianBlur(unsigned char* inputImage, unsigned char* outputImage, in
 		int startRow = i * scopeHeight;
 		int endRow = (i == nThreads - 1) ? height : startRow + scopeHeight;
 
-		threads.emplace_back([=, &inputRGB, &outputRGB]() {
+		threads.emplace_back([=, &inputBGR, &outputBGR]() {
 			cv::Rect roi(0, startRow, width, endRow - startRow);
-			cv::Mat inROI = inputRGB(roi);
-			cv::Mat outROI = outputRGB(roi);
+			cv::Mat inROI = inputBGR(roi);
+			cv::Mat outROI = outputBGR(roi);
 			cv::GaussianBlur(inROI, outROI, cv::Size(blurStrength, blurStrength), 0);
 			});
 	}
 
 	for (auto& t : threads)
 		t.join();
-
-	cv::cvtColor(outputRGB, outputBGR, cv::COLOR_RGBA2BGRA);
-	std::memcpy(outputImage, outputBGR.data, width * height * 4);
 }

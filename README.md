@@ -28,11 +28,9 @@ An ASP.NET Core REST API exposing endpoints for applying Gaussian Blur on inpute
   ### 1.6 Native Module:
   - **ApplyGaussianBlur:** 
 	- gets pointer to input 32byte RGBA array & output array (same sized as input array) ->
-	- the C# code created BGRA format -> converts to RGBA
 	- creates proper Mats for input & output
 	- calculates Threads and Scope of Threads
-	- iterate on threads -> creates ROIs of scope -> Blur the current ROI -> add blurred data to temporary RGBA array
-	- converts temporary RGBA array to BGRA array -> copy temporary BGRA to output array
+	- iterate on threads -> creates ROIs of scope -> Blur the current ROI -> add blurred data to output array
  
 ## 2. Structure
 - **ImageProcessor/:** ASP.NET project
