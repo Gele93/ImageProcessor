@@ -20,12 +20,10 @@ namespace ImageProcessor.Services.Converters
 
         public byte[] GetRawRgbBytes(Image img, out int width, out int height)
         {
-            //validates if Image is a Bitmap
             Bitmap bitmap = new Bitmap(img);
             width = bitmap.Width;
             height = bitmap.Height;
 
-            //validates pixel format
             if (_pixelFormat != bitmap.PixelFormat)
             {
                 _logger.LogError($"Pixel format missmatch: input:{bitmap.PixelFormat.ToString()} expected: {_pixelFormat.ToString()}");
