@@ -59,6 +59,7 @@ open http://localhost:5228/swagger/index.html
 ```
 
 ## 5. Useage
+*Input examples are found in /InputExamples*
  ### 5.1 [HttpPost("gaussian-blur/base-64")]
   - input image (.jpg/.png) as Base64 string
   - select .JPG or .PNG output
