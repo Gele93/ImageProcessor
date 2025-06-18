@@ -37,6 +37,12 @@ namespace ImageProcessor
 
             app.UseCors("AllowSwaggerUI");
 
+            app.MapGet("/", context =>
+            {
+                context.Response.Redirect("/swagger");
+                return Task.CompletedTask;
+            });
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
