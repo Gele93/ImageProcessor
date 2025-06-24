@@ -31,6 +31,9 @@ namespace ImageProcessor.Controllers
         [HttpPost("gaussian-blur/base-64")]
         public async Task<IActionResult> ApplyGaussianBlurToBase64Image([FromBody][Required] ImageProcessBase64Request request, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
             if (string.IsNullOrWhiteSpace(request.Base64))
                 return BadRequest("The Base64 input is empty.");
 
@@ -86,6 +89,9 @@ namespace ImageProcessor.Controllers
         [HttpPost("gaussian-blur/upload")]
         public async Task<IActionResult> ApplyGaussianBlurToUploadedImage([FromForm][Required] ImageProcessUploadRequest request, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var contentType = Utils.GetContentTypeString(request.Encoding);
 
             //Validates file format
