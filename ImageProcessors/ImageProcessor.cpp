@@ -8,8 +8,6 @@
 
 void ApplyGaussianBlur(unsigned char* inputImage, unsigned char* outputImage, int width, int height, int blurStrength) {
 
-	int channels = 4;
-
 	cv::Mat inputBGR(height, width, CV_8UC4, inputImage);
 	cv::Mat outputBGR(height, width, CV_8UC4, outputImage);
 

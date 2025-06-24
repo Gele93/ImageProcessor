@@ -37,7 +37,7 @@ namespace ImageProcessor.Services.Converters
             //inits the array for managed image data
             int size = Math.Abs(bmpData.Stride) * height;
             byte[] rawRgbBytes = new byte[size];
-
+            
             //saves img data from unmanaged memory into managed byte[]
             Marshal.Copy(bmpData.Scan0, rawRgbBytes, 0, size);
             bitmap.UnlockBits(bmpData);
